@@ -1,5 +1,6 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from base64 import b64encode, b64decode
 
 import json
 
@@ -13,9 +14,16 @@ class GenomeSequence:
 	Class for storing a genome sequence, which can affect one or more traits.
 	"""
 	attraction_traits: AttractionList
-	sequence: str
 	traits: TraitList
 	value: float | str
+	sequence: str = field(init=False, default_factory=lambda: '')
+
+	def __post_init__(self):
+		"""
+		Initializes the sequence attribute.
+		"""
+		self.sequence = self.generate_sequence_string()
+
 
 	def __str__(self):
 		return "GenomeSequence(attraction_traits={}, sequence={}, traits={}, value={})".format(self.attraction_traits, self.sequence, self.traits, self.value)
@@ -23,8 +31,18 @@ class GenomeSequence:
 	@classmethod
 	def from_sequence(cls, sequence: str) -> GenomeSequence:
 		""" Takes in sequence and returns GenomeSequence object. """
-		# TODO: Figure out a way to encode traits into a sequence.
-		...
+		decoded_sequence = b64decode(sequence)
+		json_dict = json.loads(decoded_sequence)
+		return GenomeSequence.from_json_string(json_dict)
+
+	def generate_sequence_string(self) -> str:
+		"""
+		Converts a GenomeSequence object to a sequence string.
+
+		:return: { attraction_traits, sequence, traits, value }
+		"""
+		json_string = json.dumps(json.loads(self.to_json_string()).pop('sequence'))
+		return b64encode(json_string.encode('utf-8')).decode('utf-8')
 
 	@classmethod
 	def from_json_string(cls, _json_dict: str) -> GenomeSequence:
@@ -33,10 +51,9 @@ class GenomeSequence:
 		:param _json_dict: The JSON dictionary to convert.
 		:return: The GenomeSequence object.
 		"""
-		json_dict = json.loads(_json_dict)
+		json_dict = {**json.loads(_json_dict)}
 		return GenomeSequence(
 			attraction_traits=AttractionList.from_dict(json_dict["attraction_traits"]),
-			sequence=json_dict["sequence"],
 			traits=TraitList.from_dict(json_dict["traits"]),
 			value=json_dict["value"]
 		)

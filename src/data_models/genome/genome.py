@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-from genome_sequence import GenomeSequence
+from .chromosome import Chromosome
 
 
 @dataclass
 class Genome:
-	sequences: list[GenomeSequence]
+	sequences: list[Chromosome]
 
 	@classmethod
 	def from_genetic_string(cls, genetic_string: str) -> 'Genome':
@@ -17,7 +17,7 @@ class Genome:
 		"""
 		sequences = []
 		for sequence in genetic_string.split('.'):
-			sequences.append(GenomeSequence.from_sequence(sequence))
+			sequences.append(Chromosome.from_sequence(sequence))
 		return cls(sequences)
 
 	def to_genetic_string(self) -> str:

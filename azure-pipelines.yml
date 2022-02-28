@@ -8,6 +8,7 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
+  demands: Limit -equals DisAbleParallel 
 
 steps:
 - script: |

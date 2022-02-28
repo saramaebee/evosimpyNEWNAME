@@ -1,0 +1,22 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: |
+    curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh > install.sh
+    chmod +x ./install.sh
+  displayName: 'Downloading install script > install.sh'
+
+- script: sh ./install.sh
+  displayName: 'Running install script'
+
+- script: $(FOSSA_API_KEY) fossa analyze
+  displayName: 'Performing a scan'

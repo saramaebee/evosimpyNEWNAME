@@ -6,9 +6,7 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'work mac'
-  demands: Limit -equals DisAbleParallel 
+pool: 'work mac'
 
 steps:
 - script: |

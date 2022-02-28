@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'work mac'
   demands: Limit -equals DisAbleParallel 
 
 steps:
